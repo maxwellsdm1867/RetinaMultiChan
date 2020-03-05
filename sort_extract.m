@@ -2,7 +2,12 @@ function  sort_extract(merge_file_dir,name_seq,trial_time,rslt_dir)
 %for cutting the spike from sorted spiking files
 %merge_file_dir is the dir of output of the offline sorter
 %name_seq is the cell that contains the name of the conditions
+%note: name seq has to have the exact same name comparing to the .mcd file
 %trial_time is an array that contains the recording time
+% another additional feature of the function is to extract the analog data
+% in the same time, so we won't have to have extra step before the main
+% input
+
 load(merge_file_dir)
 %loading and renaming the spikes
 Spikes = cell(1,60);
