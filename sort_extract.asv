@@ -7,10 +7,7 @@ function  sort_extract(merge_file_dir,name_seq,trial_time,rslt_dir,mcd_dir)
 % another additional feature of the function is to extract the analog data
 % in the same time, so we won't have to have extra step before the main
 % input
-if size(name_seq,2)~=length(trial_time)
-    display('check the seq name and duration')
-    keyboard
-end
+
 load(merge_file_dir)
 %loading and renaming the spikes
 Spikes = cell(1,60);
@@ -61,7 +58,7 @@ end
 
 %extract the analog data file
 
-
+[np,np1,a_data,np3] = analyze_MEA_data(mcd_name,0,'','Arthur','all');
 
 
 temp_unit = all_unit;
@@ -74,13 +71,9 @@ for i = 1:size(name_seq,2)
         tz =tk(tk>vaild_range(1));
         tempC{1,j}= tz(tz<=vaild_range(2))-vaild_range(1);
     end
-    mcd_name = [mcd_dir name_seq{i} '.mcd'];
-    [np,np1,a_data,np3] = analyze_MEA_data(mcd_name,0,'','Arthur','all');
     Spikes = [tempC; IDs];
-    extracted.Spikes = Spikes;
-    extracted.analog = a_data(2,:);
     cd(rslt_dir)
-    save(name_seq{i},'extracted')
+    save(name_seq{i},'Spikes')
     
 end
 
