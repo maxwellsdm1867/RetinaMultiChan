@@ -1,0 +1,26 @@
+BatchFolder : run several files
+
+
+MEA_SpikeTimeanalysis_Tina : program, to detect spikes from a mcd file and save the spiking time to a structure with 60 layout from a select file. analysis data by histogram
+
+MEA_SpikeTimeRecord_Tina01 : to detect spikes from a mcd file and save the spiking time to a structure with 60 layout from a select file
+
+MEA_analysis : read the file from MEA_SpikeTimeRecord_Tina01 to analysis data by histogram
+
+
+MEA layout : funciton, channel maps of MEA probe. maps can be find in ''C:\Program Files (x86)\Multi Channel Systems\MC_Rack\MeaLayouts''
+
+
+mreadMCD : function, read .mcd data. download nsMCDLibrary64_3.4 from http://www.multichannelsystems.com/, 'nsMCDLibrary64.dll; and 'mexprog.mexw64' are used.
+
+peakfinder : function, to detect spikes, parameter : p = peakfinder(data, -1, -1*std_data*5,-1) 
+
+BinningData_Tina01 : function, binning data with 5ms duration.
+
+BurstDetect_Tina01 : function, detect burst
+
+MEA_VewRangeSpike : function , plot the spikes in some range between 'SelMin' and 'SelMax'
+
+StiPattern : plot the burst time of a stimulation experiment
+
+MEA_HistoAnalysis : function, calculate chracteristic of histo
