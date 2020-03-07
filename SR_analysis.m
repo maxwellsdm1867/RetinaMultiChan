@@ -286,7 +286,7 @@ classdef SR_analysis
                 t=[-backward*bin:bin:forward*bin];
                 
                 
-                MI = information(151);
+                MI = information;
                 
 %                 % shuffle
 %                 r=randperm(length(Neurons));
