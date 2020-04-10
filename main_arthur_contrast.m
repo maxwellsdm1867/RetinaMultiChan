@@ -4,8 +4,8 @@
 close all
 clear all
 clc
-datez = '190612';
-cs = 4;
+datez = '190605';
+cs = 3;
 %reset all the path, please check
 spike_path = ['D:\sfn2019\contrast\' datez];
 %analog_path = ['D:\data\' datez];
@@ -49,6 +49,7 @@ for cdt = 1:conditions
     analyse.sampling_rate = 20000;
     analyse.num_unit = size(tmp_spk,2);
     analyse.data_time = length(tmp_analog)/analyse.sampling_rate;% in seconds
+    analyse.contrast = cdt;
     num_unit= size(tmp_spk,2);
     
     
@@ -61,22 +62,29 @@ for cdt = 1:conditions
         id_array(1,f)=str2num( id_cell{1,f});
     end
     analyse.id = id_array;
+    %Time shifted mutual information, peak height, peak location in time
     
+    
+    Infos = analyse.sampling_rate;
+    a_data = analyse.analog;
+    [MI_for_all_chan,t,porcessed] =TSMI_sorted(a_data, tmp_spk(1,:),Infos,analyse.seq,11);
+    analyse.TSMI = MI_for_all_chan;
+    analyse.mi_t = t;
     %spike count and spike time
     sc = zeros(1,num_unit);
     for k = 1:num_unit
-        sc(1,k) = length(tmp_spk{1,k});
+        sc(1,k) = length(porcessed{1,k});
     end
     analyse.spike_count = sc;
-    analyse.spike_time = tmp_spk(1,:);
+    analyse.spike_time = porcessed(1,:);
     
     %binning spike(raster plot)%this is uncutted which is uncorrect
     DataTime = analyse.data_time;
     BinningInterval = 0.040;%sec as in 25 Hz
     BinningTime = [0 :  BinningInterval : DataTime];
-    all_binspk =zeros(num_unit,length(BinningTime) );
+    all_binspk =zeros(num_unit,length(BinningTime)-1 );
     for m = 1:num_unit
-        spike_time = tmp_spk{1,m};
+        spike_time = porcessed{1,m};
         [BinningSpike] = BinSpk1(BinningInterval,spike_time,DataTime);
         all_binspk(m,:) = [BinningSpike];
     end
@@ -85,19 +93,14 @@ for cdt = 1:conditions
     %inter spike interval
     intervals = cell(1, num_unit);
     for n = 1:num_unit
-        k1 = diff(tmp_spk{1,n});
+        k1 = diff(porcessed{1,n});
         intervals{1,n} = k1;
     end
     analyse.ISI = intervals;
     
-    %Time shifted mutual information, peak height, peak location in time
-    a_data = analyse.analog;
-    sorted_Spikes = analyse.spike_time;
-    Infos = analyse.sampling_rate;
     
-    [MI_for_all_chan,t] =TSMI_sorted(a_data,sorted_Spikes,Infos,seq,11);
-    analyse.TSMI = MI_for_all_chan;
-    analyse.mi_t = t;
+    
+    
     peak_heights = zeros(1,num_unit);
     peak_locs = zeros(1,num_unit);%index
     MI_single = zeros(1,num_unit);
@@ -115,19 +118,19 @@ for cdt = 1:conditions
     analyse.misv = MI_single;
     thrs = 150;
     rpt = 2;
-    [pre_step] = cutspk(a_data,thrs,sorted_Spikes,rpt,Infos);
+    [pre_step] = cutspk(a_data,thrs,tmp_spk(1,:),rpt,Infos);
     analyse.pre = pre_step;
-    result_mi = spike_entropy(a_data,sorted_Spikes,Infos,seq );
+    result_mi = spike_entropy(a_data,tmp_spk(1,:),Infos,analyse.seq);
     analyse.spike_entropy= result_mi;
     cuts = 5;
-    sep_mi = sep_misv(a_data,sorted_Spikes,Infos,seq ,cuts);
+    sep_mi = sep_misv(a_data,tmp_spk(1,:),Infos,analyse.seq ,cuts);
     analyse.sep_mi =  sep_mi;
     %add in spike trigger average options so it will be all in one file.
     
     
     %save analyse file
     cd(result_path)
-    save( [analyse.filename(4:end) '_4'] ,'analyse')
+    save( [analyse.filename] ,'analyse')
     
     
 end
