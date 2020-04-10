@@ -76,9 +76,7 @@ for i = 1:size(name_seq,2)
         tempC{1,j}= tz(tz<=vaild_range(2))-vaild_range(1);
     end
     mcd_name = [mcd_dir name_seq{i} '.mcd']
-if i == 8
-    keyboard
-end
+if mcd
     [np,np1,a_data,np3] = analyze_MEA_data(mcd_name,0,'','Arthur','all');
     Spikes = [tempC; IDs];
     extracted.Spikes = Spikes;

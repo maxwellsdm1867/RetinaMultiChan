@@ -5,49 +5,45 @@ close all
 clear all
 clc
 datez = '190612';
+cs = 4;
 %reset all the path, please check
-spike_path = ['D:\sfn2019\cut\' datez];
+spike_path = ['D:\sfn2019\contrast\' datez];
 %analog_path = ['D:\data\' datez];
-result_path = ['D:\sfn2019\analyse\' datez];
-seq_path = 'D:\data\190318\seq.mat';
-sta_path = ['D:\sfn2019\cut\' datez '\STA.mat'];
+result_path = ['D:\sfn2019\contrast\analyse\' datez];
+load('D:\data\190509 for origin files\orgin_lng.mat')
+sta_path = ['D:\sfn2019\contrast\' datez '\sta.mat'];
 STA_ana=['D:\data\' datez '\sta.mat'];
-load(seq_path)
-analyse.seq = seq; %save seq for later
-
+%analyse.seq = seq; %save seq for later
 %conditions ----change every time
-contrast =2:3;
-noise =0:5;
+contrast =1:5;
+noise =0;
 conditions = length(noise)*length(contrast);
-tr= 'tr3';
 comp = cell(3,conditions);
 s = 1;
 %load file name, spike& channel ID, analog data
 for i = contrast
     for j = noise
-        filename1 = [tr 'c0' num2str(i) 'n' num2str(j)  '.mat'];%spike file
+        
+        filename1 = ['c0' num2str(i) 'n' num2str(j) '_' num2str(cs) '.mat'];%spike file
         load([spike_path '\' filename1])
-        comp{1,s} = Spikes;
+        comp{1,s} = extracted.Spikes;
         comp{2,s} = filename1(1:end-4);
-        %filename2 = [ 'c0' num2str(i) 'n' num2str(j)  '.mat'];%analog file
-        filename2 = [tr 'c0' num2str(i) 'n' num2str(j)  '.mat'];%analog file
-        load([analog_path '\' filename2] )
-        comp{3,s} = a_data(2,:);
+        comp{3,s} = extracted.analog;
         s = s+1;
     end
 end
 
 %% compute the spike trigger average here
-[analyse.sta analyse.staC]= arthur_sta(sta_path,300,STA_ana);
+[analyse.sta analyse.staC analyse.sta_spikes analyse.sta_seq]= arthur_sta_c(sta_path,300,STA_ana);
 
 
 %% process one condition at once
 for cdt = 1:conditions
-    %cdt = 1;%comment this one later
+    
     tmp_spk = comp{1,cdt};
     tmp_name = comp{2,cdt};
     tmp_analog = comp{3,cdt};
-    
+    analyse.seq = orgin(cdt,251:end);
     analyse.filename = tmp_name;
     analyse.analog = tmp_analog;
     analyse.sampling_rate = 20000;
@@ -74,7 +70,7 @@ for cdt = 1:conditions
     analyse.spike_count = sc;
     analyse.spike_time = tmp_spk(1,:);
     
-    %binning spike(raster plot)
+    %binning spike(raster plot)%this is uncutted which is uncorrect
     DataTime = analyse.data_time;
     BinningInterval = 0.040;%sec as in 25 Hz
     BinningTime = [0 :  BinningInterval : DataTime];
