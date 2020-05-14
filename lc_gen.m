@@ -1,4 +1,4 @@
-for i = 1:163
+for i = 1:92
     for con = 1:length(contrast)%contrast level
         for noi = 1:length(noise_level)%noise level
             z = mega{con,noi};
@@ -16,16 +16,17 @@ for i = 1:163
 end
 
 close all
-lc = zeros(1,163);
+lc = zeros(1,92);
 comp2 = cell(2,6);
-con = 1;
-for i = 1:163
+con = 2;
+for i = 1:92
             figure;hold on
             for noi = 1:length(noise_level)%noise level
                 z = mega{con,noi};
-                plot(z(i).TSMI)             
+                plot(z(i).TSMI)
+                xlim([125 175])
             end
             hold off
-      lc(i)= input('accept');
-    close all
+      %lc(i)= input('accept');
+    %close all
 end

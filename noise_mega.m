@@ -1,7 +1,7 @@
 close all
 clear all
 clc
-cd('D:\sfn2019\analyse\lump')
+cd('D:\sf\noise_lump')
 contrast = 2:3;
 noise_level = 0:5;
 rpt = 4;
@@ -33,6 +33,12 @@ for con = 1:length(contrast)%contrast level
                     sub(yo).sep_mi = z.sep_mi(:,i);
                     sub(yo).seq= z.seq;
                     sub(yo).condition = z.filename(4:end);
+                     sub(yo).Stim = z.Stim;
+                    sub(yo).staSpikes = z.staSpikes{1,i};
+                    sub(yo).staSeq = z.staSeq;
+                    sub(yo).nlx = z.nlx{1,i};
+                    sub(yo).nly = z.nly{1,i};
+                    sub(yo).nlfit = z.nlfit{1,i};
                     analog_data  =  z.analog;
                     SamplingRate=z.sampling_rate;
                     norm_analog =analog_data-mean(analog_data);
