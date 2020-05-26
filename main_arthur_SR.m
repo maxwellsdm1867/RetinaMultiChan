@@ -27,7 +27,7 @@ s = 1;
 for i = contrast
     for j = noise
         if i == 3
-            tr = 'tr3'
+            tr = 'tr3';
         end
         filename1 = [tr 'c0' num2str(i) 'n' num2str(j)  '.mat'];%spike file
         load([spike_path '\' filename1])

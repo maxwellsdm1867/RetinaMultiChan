@@ -15,16 +15,19 @@ for i = 1:92
     end
 end
 
-close all
-lc = zeros(1,92);
+%%
+close all 
+num_unit = 163;
+noise_level = 0:5;
+lc = zeros(1,num_unit);
 comp2 = cell(2,6);
-con = 2;
-for i = 1:92
+con =1;
+for i = 1:num_unit
             figure;hold on
             for noi = 1:length(noise_level)%noise level
                 z = mega{con,noi};
-                plot(z(i).TSMI)
-                xlim([125 175])
+                plot(z(i).t,z(i).TSMI)
+                xlim([-2000 2000])
             end
             hold off
       %lc(i)= input('accept');

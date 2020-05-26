@@ -33,14 +33,14 @@ end
 %unit name tag and sepetate them into different
 all_unit= {3,total_units};
 s = 1;
-for i = 1:60;
+for i = 1:60
     if ~isempty(Spikes{1,i})
         time_stamp = (Spikes{1,i}(:,3))';
         unit_idx = (Spikes{1,i}(:,2))';
         num_subunit = length(unique(unit_idx));
         for j = 1:num_subunit
             temp_stamp  = time_stamp( unit_idx == j);
-            if ~isempty(temp_stamp);
+            if ~isempty(temp_stamp)
                 all_unit{1,s}=temp_stamp ;
                 all_unit{2,s} = j;
                 all_unit{3,s} = channel(i);
@@ -75,7 +75,7 @@ for i = 1:size(name_seq,2)
         tz =tk(tk>vaild_range(1));
         tempC{1,j}= tz(tz<=vaild_range(2))-vaild_range(1);
     end
-    mcd_name = [mcd_dir name_seq{i} '.mcd']
+    mcd_name = [mcd_dir name_seq{i} '.mcd'];
     [np,np1,a_data,np3] = analyze_MEA_data(mcd_name,0,'','Arthur','all');
     Spikes = [tempC; IDs];
     extracted.Spikes = Spikes;

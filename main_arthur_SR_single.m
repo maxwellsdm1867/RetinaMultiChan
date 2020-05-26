@@ -23,7 +23,7 @@ comp{1,s} = extracted.Spikes;
 comp{2,s} = filename1(1:end-4);
 comp{3,s} = extracted.analog;
 
-con = 2 ;
+con =2 ;
 noi = 4;
 
 if con == 2

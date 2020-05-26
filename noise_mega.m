@@ -1,7 +1,7 @@
 close all
 clear all
 clc
-cd('D:\sf\noise_lump')
+cd('D:\sf\test_km\noise_lump')
 contrast = 2:3;
 noise_level = 0:5;
 rpt = 4;
@@ -33,7 +33,8 @@ for con = 1:length(contrast)%contrast level
                     sub(yo).sep_mi = z.sep_mi(:,i);
                     sub(yo).seq= z.seq;
                     sub(yo).condition = z.filename(4:end);
-                     sub(yo).Stim = z.Stim;
+                    sub(yo).firingRate =  z.BinningSpike(i,1:5000);%Because the error in Data time
+                    sub(yo).Stim = z.Stim;
                     sub(yo).staSpikes = z.staSpikes{1,i};
                     sub(yo).staSeq = z.staSeq;
                     sub(yo).nlx = z.nlx{1,i};
