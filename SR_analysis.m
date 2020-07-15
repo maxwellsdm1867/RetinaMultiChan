@@ -6,7 +6,7 @@ classdef SR_analysis
     
     properties
         mega
-        lc
+        lcs1sss~
         
     end
     properties  (Access = private)
