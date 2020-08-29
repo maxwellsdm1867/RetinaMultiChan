@@ -215,7 +215,7 @@ classdef SR_analysis
             function [BinningSpike] = BinSpk1(BinningInterval,spike_time,DataTime)
                 % transfer spike time into firing rate
                 %   input binning interval in seconds, spike in seconds
-                 BinningTime = [0 :  BinningInterval : DataTime];
+                BinningTime = [0 :  BinningInterval : DataTime];
                 %[n,xout] = hist(spike_time,BinningTime);  %putting spikes in the right timings according to an assigned bin interval
                 [N,edges] = histcounts(spike_time,BinningTime);%updated verision of binning spikes
                 BinningSpike = N;
@@ -290,54 +290,54 @@ classdef SR_analysis
                 
                 MI = information;
                 
-%                 % shuffle
-%                 r=randperm(length(Neurons));
-%                 for j=1:length(r)
-%                     sNeurons(j)=Neurons(r(j));
-%                 end
-%                 Neurons=sNeurons;
-%                 backward=ceil(shift(1)/bin); forward=ceil(shift(2)/bin);
-%                 dat=[];informationp=[];temp=backward+2;
-%                 for i=1:backward+1 %past(t<0)
-%                     x = Neurons((i-1)+forward+1:length(Neurons)-backward+(i-1))';
-%                     y = isi2(forward+1:length(isi2)-backward)';
-%                     dat{i}=[x,y];
-%                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-%                     px=sum(N,1)/sum(sum(N)); % x:stim
-%                     py=sum(N,2)/sum(sum(N)); % y:word
-%                     pxy=N/sum(sum(N));
-%                     temp2=[];
-%                     for j=1:length(px)
-%                         for k=1:length(py)
-%                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2)/(bin/1000);
-%                         end
-%                     end
-%                     temp=temp-1;
-%                     informationp(temp)=nansum(temp2(:));
-%                 end
-%                 
-%                 dat=[];informationf=[];temp=0;sdat=[];
-%                 
-%                 for i=1:forward
-%                     x = Neurons(forward+1-i:length(Neurons)-backward-i)';
-%                     y = isi2(forward+1:length(isi2)-backward)';
-%                     dat{i}=[x,y];
-%                     
-%                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-%                     px=sum(N,1)/sum(sum(N)); % x:stim
-%                     py=sum(N,2)/sum(sum(N)); % y:word
-%                     pxy=N/sum(sum(N));
-%                     temp2=[];
-%                     for j=1:length(px)
-%                         for k=1:length(py)
-%                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2)/(bin/1000);
-%                         end
-%                     end
-%                     temp=temp+1;
-%                     informationf(temp)=nansum(temp2(:));
-%                 end
-%                 information=[informationp informationf];
-%                 MI_shuffled = information;%unshuffle minous shuffled
+                %                 % shuffle
+                %                 r=randperm(length(Neurons));
+                %                 for j=1:length(r)
+                %                     sNeurons(j)=Neurons(r(j));
+                %                 end
+                %                 Neurons=sNeurons;
+                %                 backward=ceil(shift(1)/bin); forward=ceil(shift(2)/bin);
+                %                 dat=[];informationp=[];temp=backward+2;
+                %                 for i=1:backward+1 %past(t<0)
+                %                     x = Neurons((i-1)+forward+1:length(Neurons)-backward+(i-1))';
+                %                     y = isi2(forward+1:length(isi2)-backward)';
+                %                     dat{i}=[x,y];
+                %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
+                %                     px=sum(N,1)/sum(sum(N)); % x:stim
+                %                     py=sum(N,2)/sum(sum(N)); % y:word
+                %                     pxy=N/sum(sum(N));
+                %                     temp2=[];
+                %                     for j=1:length(px)
+                %                         for k=1:length(py)
+                %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2)/(bin/1000);
+                %                         end
+                %                     end
+                %                     temp=temp-1;
+                %                     informationp(temp)=nansum(temp2(:));
+                %                 end
+                %
+                %                 dat=[];informationf=[];temp=0;sdat=[];
+                %
+                %                 for i=1:forward
+                %                     x = Neurons(forward+1-i:length(Neurons)-backward-i)';
+                %                     y = isi2(forward+1:length(isi2)-backward)';
+                %                     dat{i}=[x,y];
+                %
+                %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
+                %                     px=sum(N,1)/sum(sum(N)); % x:stim
+                %                     py=sum(N,2)/sum(sum(N)); % y:word
+                %                     pxy=N/sum(sum(N));
+                %                     temp2=[];
+                %                     for j=1:length(px)
+                %                         for k=1:length(py)
+                %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2)/(bin/1000);
+                %                         end
+                %                     end
+                %                     temp=temp+1;
+                %                     informationf(temp)=nansum(temp2(:));
+                %                 end
+                %                 information=[informationp informationf];
+                %                 MI_shuffled = information;%unshuffle minous shuffled
                 
             end
             
@@ -362,7 +362,7 @@ classdef SR_analysis
                         isi2(k) = b-1;  %a new inter-pulse-interval denoted by the assigned states (ex:1-5) and with the same sampling rate as the BinningSpike
                     end
                     x = Neurons;
-                   % y = isi2;
+                    % y = isi2;
                     y = isi2(1,1+((i-1)*length(BinningSpike)/cuts):i*length(BinningSpike)/cuts);%post spilcing
                     dat=[x;y];
                     [N,C]=hist3(dat'); %20:dividing firing rate  6:# of stim
@@ -393,17 +393,55 @@ classdef SR_analysis
             %cut the array in this class;
             cut = @(p) spiltter(obj.num_cuts,p,obj.i_cut);
             function rslt = spiltter(num_cuts,n,i_cuts)
-            ed = (length(n)/num_cuts)*i_cuts;
-            st = ed-(length(n)/num_cuts)+1;
-            rslt = n(st:ed);
+                ed = (length(n)/num_cuts)*i_cuts;
+                st = ed-(length(n)/num_cuts)+1;
+                rslt = n(st:ed);
             end
             
         end
         
+        function ph = tsmi_peak_handle(obj)
+            ph = @(x,y) find_MI_peak(x,y);
+            function rslt = find_MI_peak(sys_opt,seq)
+                [MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                rslt = max(MI);
+            end
+        end
         
-    end
+        function mi = tsmi_handle(obj)
+            mi = @(x,y) find_MI_peak(x,y);
+            function rslt = find_MI(sys_opt,seq)
+                [MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                rslt = MI;
+            end
+        end
+        
+        function vis_all(obj,dat)
+            num_cell = size(dat{1,1},2);
+            cdt = 6;
+            for i = 1:num_cell
+                figure
+                subplot(2,1,1)
+                hold on
+                for j = 1:cdt
+                    plot(dat{1,1}{j,i})
+                end
+                hold off
+                subplot(2,1,2)
+                hold on
+                for k = 1:cdt
+                    plot(dat{2,1}{k,i})
+                end
+                hold off
+            end
+        end
+        
+        
+        
+        
+    end%methods ends here
     
-  
+    
     
     
     
