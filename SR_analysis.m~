@@ -215,10 +215,10 @@ classdef SR_analysis
             function [BinningSpike] = BinSpk1(BinningInterval,spike_time,DataTime)
                 % transfer spike time into firing rate
                 %   input binning interval in seconds, spike in seconds
-                 BinningTime = [0 :  BinningInterval : DataTime];
-                %[n,xout] = hist(spike_time,BinningTime);  %putting spikes in the right timings according to an assigned bin interval
-                [N,edges] = histcounts(spike_time,BinningTime);%updated verision of binning spikes
-                BinningSpike = N;
+                BinningTime = [0 :  BinningInterval : DataTime-BinningInterval];
+                [n,xout] = hist(spike_time,BinningTime);  %putting spikes in the right timings according to an assigned bin interval
+                BinningSpike = n;
+                BinningSpike(:,1) = 0;BinningSpike(:,end) = 0;
             end
             
         end
@@ -344,7 +344,7 @@ classdef SR_analysis
             
         end
         function cut_mi = cut_mi_handel(obj)
-            cut_mi = @(x,y) cut_mis(x,y,obj.num_cuts);
+            cut_mi = @(x,y) cut_mis(x,y,10);
             function rslt = cut_mis(seq,BinningSpike,cuts)
                 
                 isi = seq;
@@ -389,14 +389,11 @@ classdef SR_analysis
             end
         end
         
-        function cut = cut_handel(obj)
+        function cut = cut_handel(obj,n)
             %cut the array in this class;
-            cut = @(p) spiltter(obj.num_cuts,p,obj.i_cut);
-            function rslt = spiltter(num_cuts,n,i_cuts)
-            ed = (length(n)/num_cuts)*i_cuts;
-            st = ed-(length(n)/num_cuts)+1;
-            rslt = n(st:ed);
-            end
+            st = 
+            ed = length(n)/obj.n
+            cut = n()
             
         end
         
