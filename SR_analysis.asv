@@ -360,12 +360,13 @@ classdef SR_analysis
             
         end
         
-        function res = sliding_window_handel(obj)
-            %create a sliding window
-            res = @(p)  slider(p,obj.slide_width,obj.win_width, obj.i_side);
+        function res = sliding_window(obj)
+            %cut the array in this class;
+            cut = @(p) spiltter(obj.num_cuts,p,obj.i_cut);
             function rslt = slider(x,slide_width,win_width,i_win)
-                rslt =x(((i_win-1)*slide_width+1):(((i_win-1)*slide_width)+win_width-1));
+                rslt =x(i_win-1*slide_width)
             end
+            
         end
         
         function ph = tsmi_peak_handle(obj)
