@@ -18,6 +18,7 @@ classdef SR_analysis
         i_side = 1;%ith slide in sliding_window(obj)
         slide_width = 100;%width of one slide in sliding_window(obj)
         win_width = 3000;%width of a window in sliding_window(obj)
+        max_range = [290 300];
     end
     properties  (Access = private)
         %Parameters that come with the experiment
@@ -368,14 +369,6 @@ classdef SR_analysis
             end
         end
         
-        function ph = tsmi_peak_handle(obj)
-            ph = @(x,y) find_MI_peak(x,y);
-            function rslt = find_MI_peak(sys_opt,seq)
-                [MI, MI_shuffled,t] = tsmi_clean(sys_opt,seq);
-                rslt = max(MI);
-            end
-        end
-        
         function mi = tsmi_handle(obj)
             mi = @(x,y) find_MI(x,y,(2/obj.fr_BinningInterval));
             function rslt = find_MI(sys_opt,seq,BinningSamplingRate)
@@ -383,6 +376,10 @@ classdef SR_analysis
                 [MI,t]= only_timeshift(seq,sys_opt,BinningSamplingRate);
                 rslt = MI;
             end
+        end
+        
+        function rslt = max_handle(obj,x)
+            rslt =@(x) max(x(min(obj. max_range):max(obj. max_range)));
         end
         
         function vis_all_mv(obj,dat)
