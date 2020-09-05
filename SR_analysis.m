@@ -25,7 +25,8 @@ classdef SR_analysis
         stim_rate = 5;%update rate of the stimulus
         DataTime = 200;%data time which is fixed
         led_rate = 25;%update rate of the led
-        
+        num_contrast = 2;%total contrast level
+        num_noise = 6;%total number of the noise level
     end
     methods
         function obj = SR_analysis(mega,lc)
@@ -382,6 +383,14 @@ classdef SR_analysis
             rslt =@(x) max(x(min(obj. max_range):max(obj. max_range)));
         end
         
+        function rslt = mean_handle(obj,x)
+            rslt = @(x) mean(x);
+        end
+        
+        function rslt = err_handle(obj,x)
+            rslt =  @(x) std(x);%/length(x);
+        end
+        
         function vis_all_mv(obj,dat)
             %multi varible vaiulization
             num_cell = size(dat{1,1},2);
@@ -403,8 +412,54 @@ classdef SR_analysis
             end
         end
         
+        function rslt = collapse(obj,dat)
+            %collapse the data of either silding window or cut to a single
+            %cell, to use other builting in this class
+            num_rpt = length(dat);%number of window or cuts
+            num_cell = size(dat{1,1}{1,1},2);%number of cell in the specified type
+            c = obj.num_contrast;%number of noise
+            n = obj.num_noise;
+            temp = cell(2,1);
+            
+            for i = 1:num_cell%cell number
+                
+                for j = 1:c%contrast levels
+                    for k = 1:n%noise levels
+                        holder = zeros(1,10);
+                        for m = 1: num_rpt%number repeats
+                            holder(1,m) =  dat{1,m}{j,1}{k,i};
+                        end
+                        temp{j,1}{k,i} = holder;
+                    end
+                end
+                
+            end
+            rslt = temp;
+        end
         
-        
+        function [ps,hs] = sr_condtion(obj,dat,m)
+            %m is the mean matrix
+            %dat is the colapse matrix
+            %this function only condiers weather noise can increse the tsmi
+            num_cell = size(dat{1,1},2);%number of cell in the specified type
+            ps = zeros(2,num_cell);
+            hs = zeros(2,num_cell);
+            for i = 1:obj.num_contrast
+                for j = 1:num_cell
+                    temp_a = m{i,1}(:,j);%all of them for index purpose
+                    [v,po] = max( temp_a);
+                    %max value is not one and it is significent after the
+                    %sign rank test.
+                    if po~=1
+                        zn = dat{i,1}{1,j};%zero noise conditions
+                        comp =  dat{i,1}{po,j};
+                        [p,h] = signrank(zn,comp);
+                        ps(i,j) = p;
+                        hs(i,j) = h;
+                    end
+                end
+            end
+        end
         
     end%methods ends here
     
