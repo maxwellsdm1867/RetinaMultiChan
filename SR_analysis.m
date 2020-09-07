@@ -19,6 +19,7 @@ classdef SR_analysis
         slide_width = 100;%width of one slide in sliding_window(obj)
         win_width = 3000;%width of a window in sliding_window(obj)
         max_range = [290 300];
+        num_unit = 163;
     end
     properties  (Access = private)
         %Parameters that come with the experiment
@@ -44,7 +45,7 @@ classdef SR_analysis
             cdt_c = size(obj.mega,1);
             cdt_n = size(obj.mega,2);
             rslt = cell(cdt_c,1) ;
-            for i = 1:163
+            for i = 1:obj.num_unit
                 for con = 1:cdt_c%contrast level
                     temp = [];
                     for noi = 1:cdt_n%noise level
@@ -68,7 +69,7 @@ classdef SR_analysis
             cdt_c = size(obj.mega,1);
             cdt_n = size(obj.mega,2);
             rslt = cell(cdt_c,1) ;
-            for i = 1:163
+            for i = 1:obj.num_unit
                 for con = 1:cdt_c%contrast level
                     temp = {};
                     for noi = 1:cdt_n%noise level
