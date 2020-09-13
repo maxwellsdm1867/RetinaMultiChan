@@ -21,7 +21,7 @@ num_unit = 163;
 noise_level = 0:5;
 lc = zeros(1,num_unit);
 comp2 = cell(2,6);
-con =1;
+con =2;
 for i = 1:num_unit
             figure;hold on
             for noi = 1:length(noise_level)%noise level
@@ -30,6 +30,6 @@ for i = 1:num_unit
                 xlim([-2000 2000])
             end
             hold off
-      %lc(i)= input('accept');
-    %close all
+      lc(i)= input('accept');
+    close all
 end
