@@ -19,12 +19,12 @@ classdef SR_analysis
         slide_width = 100;%width of one slide in sliding_window(obj)
         win_width = 3000;%width of a window in sliding_window(obj)
         max_range = [140 160];
-        num_unit =98;
+        DataTime = 300;%data time which is fixed
+        num_unit = 271;
     end
     properties  (Access = private)
         %Parameters that come with the experiment
         stim_rate = 5;%update rate of the stimulus
-        DataTime = 200;%data time which is fixed
         led_rate = 25;%update rate of the led
         num_contrast = 2;%total contrast level
         num_noise = 6;%total number of the noise level
@@ -237,79 +237,79 @@ classdef SR_analysis
             end
             
         end
-%         function tsmi = tsmi_handel(obj)
-%             %mv2mv binary
-%             tsmi = @(resp,stim) tsmi_clean(resp,stim);
-%             function MI = tsmi_clean(sys_opt,seq)
-%                 %For computating the TSMI curve between any 2 equal length sequence
-%                 %   It requires two sequence to have the samle size(sampling rate)
-%                 states = 12;
-%                 shift = [6000 6000];
-%                 BinningSamplingRate = 40;
-%                 BinningInterval = 1/BinningSamplingRate;
-%                 bin = BinningInterval*1000;
-%                 X =seq;
-%                 nX = sort(X);
-%                 abin = length(nX)/states;
-%                 intervals = [ nX(1:abin:end) inf];  %make the states equally distributed
-%                 for k = 1:length(X)
-%                     [a,b] = find(X(k)<intervals,1);
-%                     isi2(k) = b-1;  %a new inter-pulse-interval denoted by the assigned states (ex:1-5) and with the same sampling rate as the BinningSpike
-%                 end
-%                 
-%                 Neurons = sys_opt;%response
-%                 %Neurons=isi2;
-%                 backward=ceil(shift(1)/bin); forward=ceil(shift(2)/bin);
-%                 dat=[];informationp=[];temp=backward+2;
-%                 for i=1:backward+1 %past(t<0)
-%                     x = Neurons((i-1)+forward+1:length(Neurons)-backward+(i-1))';
-%                     y = isi2(forward+1:length(isi2)-backward)';
-%                     dat{i}=[x,y];
-%                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-%                     px=sum(N,1)/sum(sum(N)); % x:stim
-%                     py=sum(N,2)/sum(sum(N)); % y:word
-%                     pxy=N/sum(sum(N));
-%                     temp2=[];
-%                     for j=1:length(px)
-%                         for k=1:length(py)
-%                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
-%                         end
-%                     end
-%                     temp=temp-1;
-%                     informationp(temp)=nansum(temp2(:));
-%                 end
-%                 
-%                 dat=[];informationf=[];temp=0;sdat=[];
-%                 
-%                 for i=1:forward
-%                     x = Neurons(forward+1-i:length(Neurons)-backward-i)';
-%                     y = isi2(forward+1:length(isi2)-backward)';
-%                     dat{i}=[x,y];
-%                     
-%                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-%                     px=sum(N,1)/sum(sum(N)); % x:stim
-%                     py=sum(N,2)/sum(sum(N)); % y:word
-%                     pxy=N/sum(sum(N));
-%                     temp2=[];
-%                     for j=1:length(px)
-%                         for k=1:length(py)
-%                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
-%                         end
-%                     end
-%                     temp=temp+1;
-%                     informationf(temp)=nansum(temp2(:));
-%                 end
-%                 information=[informationp informationf];
-%                 t=[-backward*bin:bin:forward*bin];
-%                 
-%                 
-%                 MI = information;
-%                 
-%             end
-%             
-%             
-%         end
-%         
+        %         function tsmi = tsmi_handel(obj)
+        %             %mv2mv binary
+        %             tsmi = @(resp,stim) tsmi_clean(resp,stim);
+        %             function MI = tsmi_clean(sys_opt,seq)
+        %                 %For computating the TSMI curve between any 2 equal length sequence
+        %                 %   It requires two sequence to have the samle size(sampling rate)
+        %                 states = 12;
+        %                 shift = [6000 6000];
+        %                 BinningSamplingRate = 40;
+        %                 BinningInterval = 1/BinningSamplingRate;
+        %                 bin = BinningInterval*1000;
+        %                 X =seq;
+        %                 nX = sort(X);
+        %                 abin = length(nX)/states;
+        %                 intervals = [ nX(1:abin:end) inf];  %make the states equally distributed
+        %                 for k = 1:length(X)
+        %                     [a,b] = find(X(k)<intervals,1);
+        %                     isi2(k) = b-1;  %a new inter-pulse-interval denoted by the assigned states (ex:1-5) and with the same sampling rate as the BinningSpike
+        %                 end
+        %
+        %                 Neurons = sys_opt;%response
+        %                 %Neurons=isi2;
+        %                 backward=ceil(shift(1)/bin); forward=ceil(shift(2)/bin);
+        %                 dat=[];informationp=[];temp=backward+2;
+        %                 for i=1:backward+1 %past(t<0)
+        %                     x = Neurons((i-1)+forward+1:length(Neurons)-backward+(i-1))';
+        %                     y = isi2(forward+1:length(isi2)-backward)';
+        %                     dat{i}=[x,y];
+        %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
+        %                     px=sum(N,1)/sum(sum(N)); % x:stim
+        %                     py=sum(N,2)/sum(sum(N)); % y:word
+        %                     pxy=N/sum(sum(N));
+        %                     temp2=[];
+        %                     for j=1:length(px)
+        %                         for k=1:length(py)
+        %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
+        %                         end
+        %                     end
+        %                     temp=temp-1;
+        %                     informationp(temp)=nansum(temp2(:));
+        %                 end
+        %
+        %                 dat=[];informationf=[];temp=0;sdat=[];
+        %
+        %                 for i=1:forward
+        %                     x = Neurons(forward+1-i:length(Neurons)-backward-i)';
+        %                     y = isi2(forward+1:length(isi2)-backward)';
+        %                     dat{i}=[x,y];
+        %
+        %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
+        %                     px=sum(N,1)/sum(sum(N)); % x:stim
+        %                     py=sum(N,2)/sum(sum(N)); % y:word
+        %                     pxy=N/sum(sum(N));
+        %                     temp2=[];
+        %                     for j=1:length(px)
+        %                         for k=1:length(py)
+        %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
+        %                         end
+        %                     end
+        %                     temp=temp+1;
+        %                     informationf(temp)=nansum(temp2(:));
+        %                 end
+        %                 information=[informationp informationf];
+        %                 t=[-backward*bin:bin:forward*bin];
+        %
+        %
+        %                 MI = information;
+        %
+        %             end
+        %
+        %
+        %         end
+        %
         
         function cut_mi = cut_mi_handel(obj)
             cut_mi = @(x,y) cut_mis(x,y,obj.num_cuts);
@@ -470,6 +470,67 @@ classdef SR_analysis
             rslt = temp;
         end
         
+        
+        function sta = sta_handle(obj)
+            sta= @(x,y) find_sta(x,y);
+            function rslt = find_sta(stim,fr)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [stas,~] = obj.sta_check(stim,fr);
+                rslt = stas;
+            end
+        end
+        function sta =gen_sg_handle(obj)
+            sta= @(x,y) find_sta(x,y);
+            function rslt = find_sta(stim,fr)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [~,gen_signal,~,~] = obj.sta_check(stim,fr);
+                rslt = gen_signal;
+            end
+        end
+        
+        function sta =nlx_handle(obj)
+            sta= @(x,y) find_sta(x,y);
+            function rslt = find_sta(stim,fr)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [~,~,nlx,~] = obj.sta_check(stim,fr);
+                rslt = nlx;
+            end
+        end
+        
+        function sta =nly_handle(obj)
+            sta= @(x,y) find_sta(x,y);
+            function rslt = find_sta(stim,fr)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [~,~,~,nly] = obj.sta_check(stim,fr);
+                rslt = nly;
+            end
+        end
+        
+        function [sta,gen_signal,fx,fy] = sta_check(~,sta_seq,sta_fr)
+            sps = sta_fr;
+            nsp = sum(sps);
+            seq1 = sta_seq(1:7500);
+            Stim= seq1-mean(seq1);
+            Stim = Stim';
+            sps = sps';
+            ntfilt = 13;  % length of linear the filter
+            paddedStim = [zeros(ntfilt-1,1); Stim]; % pad early bins of stimulus with zero
+            Xdsgn = hankel(paddedStim(1:end-ntfilt+1), Stim(end-ntfilt+1:end));%hankel matrix
+            sta = (Xdsgn'*sps)/nsp;
+            %gen_signal =(Xdsgn)*sta; %the output of sta(Generator output)
+            rawfilteroutput0 = conv(Stim,flip(sta)) ;
+            gen_signal  = rawfilteroutput0(1:7500);
+            %scatter(gen_signal,sps) make a scatter handle later
+            nfbins = 10;
+            [cts,binedges,binID] = histcounts(gen_signal,nfbins);
+            fx = binedges(1:end-1)+diff(binedges(1:2))/2; % use bin centers for x positions
+            fy = zeros(nfbins,1); % y values for nonlinearity
+            for jj = 1:nfbins
+                fy(jj) = mean(sps(binID==jj));
+            end
+            
+        end
+        
         function [ps,hs] = sr_condtion(obj,dat,m)
             %m is the mean matrix
             %dat is the colapse matrix
@@ -494,6 +555,12 @@ classdef SR_analysis
                     end
                 end
             end
+        end
+        
+        function [rslt]= row_extracter(obj,data,con,noi)
+            %con is the constrast level and noi is the noise level
+            temp =data{con,1};
+            rslt = temp(noi,:);
         end
         
     end%methods ends here
