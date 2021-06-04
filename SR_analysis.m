@@ -19,8 +19,9 @@ classdef SR_analysis
         slide_width = 100;%width of one slide in sliding_window(obj)
         win_width = 3000;%width of a window in sliding_window(obj)
         max_range = [140 160];
-        DataTime = 300;%data time which is fixed
+        DataTime = 200;%data time which is fixed
         num_unit = 271;
+        cell_idx = [];
     end
     properties  (Access = private)
         %Parameters that come with the experiment
@@ -39,6 +40,8 @@ classdef SR_analysis
             end
         end
         
+        
+        %% extractors, to extract basic information form mega file according to
         function rslt= sr_extracter_sv(obj,varable_nme,cell_tpe)
             %This is the function to extract single value variable cell by cell
             %  the result is an 1 by 2 cell and each cell contains the
@@ -50,7 +53,7 @@ classdef SR_analysis
                     temp = [];
                     for noi = 1:cdt_n%noise level
                         z = obj.mega{con,noi};
-                        if obj.lc(i) == 1&&  ismember(z(i).type,cell_tpe)
+                        if obj.lc(i) == 1&& ismember(z(i).type,cell_tpe)
                             ks1 =  eval(['z(' num2str(i) ').' varable_nme]);
                             temp = [temp; ks1];
                         end
@@ -75,7 +78,7 @@ classdef SR_analysis
                     for noi = 1:cdt_n%noise level
                         z = obj.mega{con,noi};
                         
-                        if obj.lc(i) == 1&& ismember(z(i).type,cell_tpe)
+                        if obj.lc(i) == 1&& ismember(z(i).type,cell_tpe)%ismember(obj.cell_idx(i),cell_tpe)
                             
                             ks1 =  eval(['z(' num2str(i) ').' varable_nme]);
                             temp{size(temp,1)+1,1}= ks1;
@@ -86,9 +89,55 @@ classdef SR_analysis
                 end
             end
         end
+        %% post clustering extraction
+        function rslt= sr_extracter_sv_p(obj,varable_nme,cell_tpe)
+            %This is the function to extract single value variable cell by cell
+            %  the result is an 1 by 2 cell and each cell contains the
+            cdt_c = size(obj.mega,1);
+            cdt_n = size(obj.mega,2);
+            rslt = cell(cdt_c,1) ;
+            for i = 1:obj.num_unit
+                for con = 1:cdt_c%contrast level
+                    temp = [];
+                    for noi = 1:cdt_n%noise level
+                        z = obj.mega{con,noi};
+                        if obj.lc(i) == 1&&  ismember( obj.cell_idx(i),cell_tpe)
+                            ks1 =  eval(['z(' num2str(i) ').' varable_nme]);
+                            temp = [temp; ks1];
+                        end
+                    end
+                    rslt{con,1} = [rslt{con,1} temp];
+                end
+            end
+            
+        end
         
-        
-        
+        function rslt= sr_extracter_mv_p(obj, varable_nme,cell_tpe)
+            %Extract the non-single value data form mega
+            %   input is the object it self and what variable you want to
+            %   extract, and what specific cell type you want extract
+            
+            cdt_c = size(obj.mega,1);
+            cdt_n = size(obj.mega,2);
+            rslt = cell(cdt_c,1) ;
+            for i = 1:obj.num_unit
+                for con = 1:cdt_c%contrast level
+                    temp = {};
+                    for noi = 1:cdt_n%noise level
+                        z = obj.mega{con,noi};
+                        
+                        if obj.lc(i) == 1&& ismember(obj.cell_idx(i),cell_tpe)
+                            
+                            ks1 =  eval(['z(' num2str(i) ').' varable_nme]);
+                            temp{size(temp,1)+1,1}= ks1;
+                        end
+                    end
+                    %keyboard
+                    rslt{con,1} = [rslt{con,1} temp];
+                end
+            end
+        end
+        %% function mapper  of different type
         % these are function appliers that is either singular or binary
         %singular means it takes one input and map to one output using the given figure handle
         function rslt = singular_mv2sv(obj,input_cel,function_handle)
@@ -201,7 +250,7 @@ classdef SR_analysis
             
             
         end
-        
+        %%
         %these function bloew will be functions that create the modified function that can
         %be work with sr_applier_mv
         % for a mixed binary, single value is the first input and
@@ -237,79 +286,6 @@ classdef SR_analysis
             end
             
         end
-        %         function tsmi = tsmi_handel(obj)
-        %             %mv2mv binary
-        %             tsmi = @(resp,stim) tsmi_clean(resp,stim);
-        %             function MI = tsmi_clean(sys_opt,seq)
-        %                 %For computating the TSMI curve between any 2 equal length sequence
-        %                 %   It requires two sequence to have the samle size(sampling rate)
-        %                 states = 12;
-        %                 shift = [6000 6000];
-        %                 BinningSamplingRate = 40;
-        %                 BinningInterval = 1/BinningSamplingRate;
-        %                 bin = BinningInterval*1000;
-        %                 X =seq;
-        %                 nX = sort(X);
-        %                 abin = length(nX)/states;
-        %                 intervals = [ nX(1:abin:end) inf];  %make the states equally distributed
-        %                 for k = 1:length(X)
-        %                     [a,b] = find(X(k)<intervals,1);
-        %                     isi2(k) = b-1;  %a new inter-pulse-interval denoted by the assigned states (ex:1-5) and with the same sampling rate as the BinningSpike
-        %                 end
-        %
-        %                 Neurons = sys_opt;%response
-        %                 %Neurons=isi2;
-        %                 backward=ceil(shift(1)/bin); forward=ceil(shift(2)/bin);
-        %                 dat=[];informationp=[];temp=backward+2;
-        %                 for i=1:backward+1 %past(t<0)
-        %                     x = Neurons((i-1)+forward+1:length(Neurons)-backward+(i-1))';
-        %                     y = isi2(forward+1:length(isi2)-backward)';
-        %                     dat{i}=[x,y];
-        %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-        %                     px=sum(N,1)/sum(sum(N)); % x:stim
-        %                     py=sum(N,2)/sum(sum(N)); % y:word
-        %                     pxy=N/sum(sum(N));
-        %                     temp2=[];
-        %                     for j=1:length(px)
-        %                         for k=1:length(py)
-        %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
-        %                         end
-        %                     end
-        %                     temp=temp-1;
-        %                     informationp(temp)=nansum(temp2(:));
-        %                 end
-        %
-        %                 dat=[];informationf=[];temp=0;sdat=[];
-        %
-        %                 for i=1:forward
-        %                     x = Neurons(forward+1-i:length(Neurons)-backward-i)';
-        %                     y = isi2(forward+1:length(isi2)-backward)';
-        %                     dat{i}=[x,y];
-        %
-        %                     [N,C]=hist3(dat{i}); %20:dividing firing rate  6:# of stim
-        %                     px=sum(N,1)/sum(sum(N)); % x:stim
-        %                     py=sum(N,2)/sum(sum(N)); % y:word
-        %                     pxy=N/sum(sum(N));
-        %                     temp2=[];
-        %                     for j=1:length(px)
-        %                         for k=1:length(py)
-        %                             temp2(k,j)=pxy(k,j)*log( pxy(k,j)/ (py(k)*px(j)) )/log(2);
-        %                         end
-        %                     end
-        %                     temp=temp+1;
-        %                     informationf(temp)=nansum(temp2(:));
-        %                 end
-        %                 information=[informationp informationf];
-        %                 t=[-backward*bin:bin:forward*bin];
-        %
-        %
-        %                 MI = information;
-        %
-        %             end
-        %
-        %
-        %         end
-        %
         
         function cut_mi = cut_mi_handel(obj)
             cut_mi = @(x,y) cut_mis(x,y,obj.num_cuts);
@@ -470,7 +446,7 @@ classdef SR_analysis
             rslt = temp;
         end
         
-        
+        %% code for linear nonliner extraction from gaussain stimulus
         function sta = sta_handle(obj)
             sta= @(x,y) find_sta(x,y);
             function rslt = find_sta(stim,fr)
@@ -521,7 +497,7 @@ classdef SR_analysis
             rawfilteroutput0 = conv(Stim,flip(sta)) ;
             gen_signal  = rawfilteroutput0(1:7500);
             %scatter(gen_signal,sps) make a scatter handle later
-            nfbins = 10;
+            nfbins = 11;
             [cts,binedges,binID] = histcounts(gen_signal,nfbins);
             fx = binedges(1:end-1)+diff(binedges(1:2))/2; % use bin centers for x positions
             fy = zeros(nfbins,1); % y values for nonlinearity
@@ -531,6 +507,78 @@ classdef SR_analysis
             
         end
         
+        %% code for cell type clustering
+        function sta =res_handle(obj)%biphasicness of the filter
+            sta= @(x,y) find_celltype(x,y);
+            function rslt = find_celltype(sta,nly)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [res,u_idx,r]= cell_type_pram(obj,sta,nly);
+                rslt = res;
+            end
+        end
+        function sta =u_idx_handle(obj)% u-shanpe of the nonlinearity
+            sta= @(x,y) find_celltype(x,y);
+            function rslt = find_celltype(sta,nly)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [res,u_idx,r]= cell_type_pram(obj,sta,nly);
+                rslt = u_idx;
+            end
+        end
+        function sta =r_handle(obj)%ploarity
+            sta= @(x,y) find_celltype(x,y);
+            function rslt = find_celltype(sta,nly)
+                %[MI, MI_shuffled,t] = tsmi_clean1(sys_opt,seq);
+                [res,u_idx,r]= cell_type_pram(obj,sta,nly);
+                rslt = r;
+            end
+        end
+        function [res,u_idx,r]= cell_type_pram(obj,sta,nly)
+            fact = 100;
+            up_sta= interp(sta,fact);
+            f_up= up_sta(1:1200);
+            u_idx = stm_ushape(nly);
+            f_up= up_sta(1:1200);
+            temp = f_up(800:end);
+            m = mean(f_up(1:600));
+            mid = temp-m;
+            po = abs(sum(mid(mid>0)));
+            ne = abs(sum(mid(mid<0)));
+            tot_area = sum(abs(mid));
+            d= po-ne;
+            res = d./tot_area;
+            zci = @(v) find(v(:).*circshift(v(:), [-1 0]) <= 0);
+            pr= zci(f_up);
+            z = [];
+           
+            %need to hadle the points without zeros crossing
+            if sum(abs(f_up))==abs(sum(f_up))
+                r = sum(f_up);
+            else%one with zero crossing
+                for i= 1:length(pr)
+                    temp = pr(i);
+                    z = [z sum(f_up(temp:end))];
+                end
+                [m,mi] = max(abs(z));
+                r = z(mi);
+            end
+            %             ver 2
+            %             fact = 100;
+            %             up_sta= interp(sta,fact);
+            %             f_up= up_sta(1:1200);
+            %             u_idx = stm_ushape(nly);
+            %             f_up= up_sta(1:1200);
+            %             temp = f_up(800:end);
+            %             m = mean(f_up(1:600));
+            %             mid = temp-m;
+            %             po = abs(sum(mid(mid>0)));
+            %             ne = abs(sum(mid(mid<0)));
+            %             tot_area = sum(abs(mid));
+            %             d= po-ne;
+            %             res = d./tot_area;
+            %
+            %             r = sum(f_up(1000:end));
+        end
+        %% others
         function [ps,hs] = sr_condtion(obj,dat,m)
             %m is the mean matrix
             %dat is the colapse matrix
